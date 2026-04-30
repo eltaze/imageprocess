@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<!-- استهداف ويندوز 10 بإصدار محدد يدعم OCR -->
+		<TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+		<TargetPlatformVersion>10.0.19041.0</TargetPlatformVersion>
+		<SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<!-- تحديد أقل إصدار يدعم التطبيق -->
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Emgu.CV" Version="4.12.0.5764" />
+	  <PackageReference Include="Emgu.CV.runtime.windows" Version="4.12.0.5764" />
+	  <PackageReference Include="OpenCvSharp4" Version="4.13.0.20260427" />
+	  <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.13.0.20260302" />
+	  <PackageReference Include="Tesseract" Version="5.2.0" />
+	</ItemGroup>
+
+	<!-- تأكد من حذف أي إشارة لـ Microsoft.Windows.SDK.Contracts هنا -->
+
+</Project>

@@ -1,0 +1,7 @@
+-target net8.0
+-input 10.0.19041.1
+-input 
+-output "C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\obj\Debug\net10.0-windows10.0.19041.1\Generated Files\CsWinRT"
+
+-exclude Windows
+-exclude Microsoft

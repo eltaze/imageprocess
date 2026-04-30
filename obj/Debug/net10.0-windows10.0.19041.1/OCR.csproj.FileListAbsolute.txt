@@ -1,0 +1,5 @@
+C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\obj\Debug\net10.0-windows10.0.19041.1\OCR.csproj.AssemblyReference.cache
+C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\obj\Debug\net10.0-windows10.0.19041.1\OCR.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\obj\Debug\net10.0-windows10.0.19041.1\OCR.AssemblyInfoInputs.cache
+C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\obj\Debug\net10.0-windows10.0.19041.1\OCR.AssemblyInfo.cs
+C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\obj\Debug\net10.0-windows10.0.19041.1\OCR.csproj.CoreCompileInputs.cache
