@@ -1,146 +1,231 @@
-﻿
+using System;
+using System.IO;
+using System.Threading.Tasks;
+using ImageProcessing;
 
-using TradingBot.OcrModule;
+Console.OutputEncoding = System.Text.Encoding.UTF8;
+Console.InputEncoding  = System.Text.Encoding.UTF8;
 
-class Program
+// ── Configuration ─────────────────────────────────────────────────────────────
+// Use AppDomain.CurrentDomain.BaseDirectory (the exe folder) — always writable
+string baseDir       = AppDomain.CurrentDomain.BaseDirectory;
+string inputImage    = @"C:\test.png";                                  // Source image
+string filteredImage = Path.Combine(baseDir, "test_filtered.png");     // Writable output
+string tessDataPath  = @"C:\mpdata";                                  // Tesseract tessdata folder
+string tessLanguage  = "ara+eng";                                       // Tesseract language(s)
+// ──────────────────────────────────────────────────────────────────────────────
+
+PrintBanner();
+PrintConfig(inputImage, filteredImage, tessDataPath);
+
+// ── Pre-flight checks ─────────────────────────────────────────────────────────
+if (!RunPreflightChecks(inputImage, tessDataPath, tessLanguage))
+    return;
+
+// ── Step 1: DocumentFilter ────────────────────────────────────────────────────
+Section("Step 1 – Document Filter (Emgu.CV)");
+
+var filter = new DocumentFilter();
+bool filtered = filter.Execute(inputImage, filteredImage, threshold: 150);
+
+if (!filtered || !File.Exists(filteredImage))
 {
-    static void Main(string[] args)
+    Console.ForegroundColor = ConsoleColor.Red;
+    Console.WriteLine("[ERROR] Image filtering failed — cannot continue.");
+    Console.ResetColor();
+    return;
+}
+
+Console.ForegroundColor = ConsoleColor.Green;
+Console.WriteLine($"  ✅ Filtered image ready ({new FileInfo(filteredImage).Length / 1024} KB)");
+Console.ResetColor();
+
+// ── Step 2: OCR Benchmark ─────────────────────────────────────────────────────
+Section("Step 2 – Running OCR Engines");
+
+var benchmark = new OcrBenchmark(tessDataPath, tessLanguage);
+
+// Start Windows OCR async, run Tesseract sync in parallel
+Console.WriteLine("  ⏳ Running Windows OCR...");
+var winTask = benchmark.RunWindowsOcrAsync(filteredImage);
+
+Console.WriteLine("  ⏳ Running Tesseract OCR...");
+var tessResult = benchmark.RunTesseractOcr(filteredImage);
+
+var winResult = await winTask;
+
+// ── Step 3: Display Results ───────────────────────────────────────────────────
+Section("Step 3 – Results Comparison");
+
+PrintResult(winResult,  "🪟");
+PrintResult(tessResult, "📖");
+
+// ── Step 4: Performance Summary ──────────────────────────────────────────────
+Section("Step 4 – Performance Summary");
+PrintPerformanceTable(winResult, tessResult);
+
+Console.WriteLine();
+Console.ForegroundColor = ConsoleColor.DarkGray;
+Console.WriteLine($"  Filtered image: {filteredImage}");
+Console.ResetColor();
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+static void PrintBanner()
+{
+    Console.ForegroundColor = ConsoleColor.Cyan;
+    Console.WriteLine("╔══════════════════════════════════════════════════════╗");
+    Console.WriteLine("║       OCR Benchmark: Windows OCR vs Tesseract        ║");
+    Console.WriteLine("╚══════════════════════════════════════════════════════╝");
+    Console.ResetColor();
+}
+
+static void PrintConfig(string input, string filtered, string tessdata)
+{
+    Console.ForegroundColor = ConsoleColor.DarkGray;
+    Console.WriteLine($"\n  Input image   : {input}");
+    Console.WriteLine($"  Filtered image: {filtered}");
+    Console.WriteLine($"  Tessdata path : {tessdata}");
+    Console.ResetColor();
+}
+
+static bool RunPreflightChecks(string inputImage, string tessDataPath, string tessLanguage)
+{
+    Section("Pre-flight Checks");
+    bool ok = true;
+
+    // Check input image
+    if (!File.Exists(inputImage))
     {
-        Console.OutputEncoding = System.Text.Encoding.UTF8;
+        Fail($"Input image not found: {inputImage}");
+        ok = false;
+    }
+    else
+        Pass($"Input image found: {inputImage}");
 
-        string inputImage = @"C:\test.png";
-        string tessDataPath = @"C:\data";
+    // Check tessdata folder
+    if (!Directory.Exists(tessDataPath))
+    {
+        Fail($"Tessdata folder not found: {tessDataPath}");
+        ok = false;
+    }
+    else
+    {
+        Pass($"Tessdata folder found: {tessDataPath}");
 
-        if (!Directory.Exists(tessDataPath))
+        // List available .traineddata files
+        var files = Directory.GetFiles(tessDataPath, "*.traineddata");
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        Console.WriteLine($"    Available traineddata files ({files.Length}):");
+        foreach (var f in files)
+            Console.WriteLine($"      • {Path.GetFileName(f)}");
+        Console.ResetColor();
+
+        // Check each required language
+        foreach (string lang in tessLanguage.Split('+'))
         {
-            Console.WriteLine($"[Error]: Missing tessdata folder.");
-            return;
+            string expected = Path.Combine(tessDataPath, lang.Trim() + ".traineddata");
+            if (!File.Exists(expected))
+            {
+                Fail($"Missing: {expected}");
+                ok = false;
+            }
+            else
+                Pass($"Language file found: {lang}.traineddata");
         }
+    }
 
-        OrderFlowAnalyzer.ExecuteFullOcrProcess(inputImage, tessDataPath);
+    if (!ok)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("\n  ❌ Pre-flight failed. Fix the above issues and re-run.");
+        Console.ResetColor();
+    }
+
+    return ok;
+}
+
+static void Pass(string msg) { Console.ForegroundColor = ConsoleColor.Green;  Console.WriteLine($"  ✅ {msg}"); Console.ResetColor(); }
+static void Fail(string msg) { Console.ForegroundColor = ConsoleColor.Red;    Console.WriteLine($"  ❌ {msg}"); Console.ResetColor(); }
+
+static void Section(string title)
+{
+    Console.WriteLine();
+    Console.ForegroundColor = ConsoleColor.Yellow;
+    Console.WriteLine("┌─────────────────────────────────────────────────────");
+    Console.WriteLine($"│  {title}");
+    Console.WriteLine("└─────────────────────────────────────────────────────");
+    Console.ResetColor();
+}
+
+static void PrintResult(ImageProcessing.OcrEngineResult r, string icon)
+{
+    Console.ForegroundColor = ConsoleColor.Magenta;
+    Console.WriteLine($"\n  {icon}  {r.EngineName}");
+    Console.ForegroundColor = ConsoleColor.DarkGray;
+    Console.WriteLine($"  Time: {r.Elapsed.TotalMilliseconds:F0} ms");
+    Console.ResetColor();
+
+    if (!string.IsNullOrEmpty(r.Error))
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine($"  ⚠️  Error: {r.Error}");
+        Console.ResetColor();
+        return;
+    }
+
+    if (string.IsNullOrWhiteSpace(r.Text))
+    {
+        Console.ForegroundColor = ConsoleColor.DarkYellow;
+        Console.WriteLine("  (no text extracted)");
+    }
+    else
+    {
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.WriteLine("  ── Extracted Text ──────────────────────────────");
+        Console.WriteLine(r.Text.TrimEnd());
+        Console.WriteLine("  ────────────────────────────────────────────────");
+        int wordCount = r.Text.Split(new[] {' ', '\n', '\r'}, StringSplitOptions.RemoveEmptyEntries).Length;
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        Console.WriteLine($"  Word count: ~{wordCount}");
+    }
+    Console.ResetColor();
+}
+
+static void PrintPerformanceTable(
+    ImageProcessing.OcrEngineResult win,
+    ImageProcessing.OcrEngineResult tess)
+{
+    int winMs  = (int)win.Elapsed.TotalMilliseconds;
+    int tessMs = (int)tess.Elapsed.TotalMilliseconds;
+
+    Console.ForegroundColor = ConsoleColor.Cyan;
+    Console.WriteLine($"  {"Engine",-32} {"Time (ms)",10}   {"Words",8}   {"Status",-15}");
+    Console.WriteLine($"  {"──────",32} {"──────────",10}   {"─────",8}   {"──────────────",15}");
+
+    PrintRow("🪟  Windows OCR",   winMs,  tessMs, win.Text,  win.Error);
+    PrintRow("📖  Tesseract OCR", tessMs, winMs,  tess.Text, tess.Error);
+    Console.ResetColor();
+
+    if (string.IsNullOrEmpty(win.Error) && string.IsNullOrEmpty(tess.Error))
+    {
+        string winner = winMs < tessMs ? "🪟  Windows OCR" : winMs == tessMs ? "Tie" : "📖  Tesseract OCR";
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine($"\n  🏆  Fastest engine: {winner}");
+        Console.ResetColor();
     }
 }
 
-////using System;
-////using Emgu.CV;
-////using Emgu.CV.Util;
+static void PrintRow(string name, int myMs, int otherMs, string text, string error)
+{
+    int words = string.IsNullOrWhiteSpace(text) ? 0 :
+        text.Split(new[] {' ', '\n', '\r'}, StringSplitOptions.RemoveEmptyEntries).Length;
 
-////namespace ImageProcessing
-////{
-////    public class DocumentFilter
-////    {
-////        public void Execute(string imagePath, string restoredImagePath)
-////        {
-////            // تحميل الصورة بالألوان القياسية
-////            using (Mat originalImage = CvInvoke.Imread(imagePath, Emgu.CV.CvEnum.ImreadModes.ColorBgr))
-////            {
-////                if (originalImage.IsEmpty)
-////                {
-////                    Console.WriteLine("فشل في تحميل الصورة.");
-////                    return;
-////                }
+    string status = !string.IsNullOrEmpty(error) ? "❌ Error"
+        : myMs <= otherMs ? "✅ Faster"
+        : "🐢 Slower";
 
-////                using (VectorOfMat channels = new VectorOfMat())
-////                using (Mat resultImage = new Mat())
-////                {
-////                    // 1. فصل الصورة إلى قنواتها الثلاث (B, G, R)
-////                    CvInvoke.Split(originalImage, channels);
-
-////                    // 2. استدعاء القناة الخضراء فقط (الفهرس 1 لأن الترتيب هو BGR)
-////                    using (Mat greenChannel = channels[1])
-////                    {
-////                        // 3. تطبيق Threshold ثنائي
-////                        // أي بكسل قيمته أعلى من 150 (فاتح/أخضر) سيتحول إلى 255 (أبيض)
-////                        // أي بكسل قيمته أقل (مثل النص الأسود) سيتحول إلى 0 (أسود)
-////                        CvInvoke.Threshold(greenChannel, resultImage, 150, 255, Emgu.CV.CvEnum.ThresholdType.Binary);
-
-////                        // 4. حفظ الصورة النهائية
-////                        CvInvoke.Imwrite(restoredImagePath, resultImage);
-
-////                        Console.WriteLine("تمت تصفية المستند بنجاح.");
-////                    }
-////                }
-////            }
-////        }
-////    }
-
-////    public class Program
-////    {
-////        public static void Main(string[] args)
-////        {
-////            DocumentFilter filter = new DocumentFilter();
-
-////            string input = @"C:\test.png";
-////            string cleanOutput = "clean_document_output.jpg";
-
-////            filter.Execute(input, cleanOutput);
-////        }
-////    }
-////}
-
-//using System;
-//using Emgu.CV;
-//using Emgu.CV.Structure;
-
-//namespace ImageProcessing
-//{
-//    public class DocumentWatermarkProcessor
-//    {
-//        public void ExtractAndRestore(string imagePath, string watermarkLayerPath, string restoredImagePath)
-//        {
-//            using (Mat originalImage = CvInvoke.Imread(imagePath, Emgu.CV.CvEnum.ImreadModes.AnyColor))
-//            {
-//                if (originalImage.IsEmpty)
-//                {
-//                    Console.WriteLine("فشل في تحميل الصورة. تأكد من صحة المسار.");
-//                    return;
-//                }
-
-//                using (Mat hsvImage = new Mat())
-//                using (Mat watermarkMask = new Mat())
-//                using (Mat restoredImage = new Mat())
-//                {
-//                    CvInvoke.CvtColor(originalImage, hsvImage, Emgu.CV.CvEnum.ColorConversion.Bgr2Hsv);
-
-//                    // النطاق اللوني الخاص بالعلامة المائية الخضراء
-//                    ScalarArray lowerBound = new ScalarArray(new MCvScalar(35, 50, 50));
-//                    ScalarArray upperBound = new ScalarArray(new MCvScalar(85, 255, 255));
-
-//                    CvInvoke.InRange(hsvImage, lowerBound, upperBound, watermarkMask);
-
-//                    // تم استبدال ElementShape بـ MorphShapes ليتوافق مع الإصدارات الحديثة
-//                    // تم إضافة using هنا لتحرير الـ Mat Kernel من الذاكرة بمجرد انتهاء التمدد
-//                    using (Mat kernel = CvInvoke.GetStructuringElement(
-//                        Emgu.CV.CvEnum.MorphShapes.Rectangle,
-//                        new System.Drawing.Size(3, 3),
-//                        new System.Drawing.Point(-1, -1)))
-//                    {
-//                        CvInvoke.Dilate(watermarkMask, watermarkMask, kernel, new System.Drawing.Point(-1, -1), 1, Emgu.CV.CvEnum.BorderType.Default, new MCvScalar());
-//                    }
-
-//                    CvInvoke.Imwrite(watermarkLayerPath, watermarkMask);
-
-//                    CvInvoke.Inpaint(originalImage, watermarkMask, restoredImage, 3, Emgu.CV.CvEnum.InpaintType.Telea);
-
-//                    CvInvoke.Imwrite(restoredImagePath, restoredImage);
-
-//                    Console.WriteLine("تمت المعالجة اللونية بنجاح.");
-//                }
-//            }
-//        }
-//    }
-
-//    public class Program
-//    {
-//        public static void Main(string[] args)
-//        {
-//            DocumentWatermarkProcessor processor = new DocumentWatermarkProcessor();
-
-//            string input = @"C:\test.png";
-//            string extractedWatermark = "extracted_watermark_layer_hsv.png";
-//            string restoredOutput = "restored_original_hsv.jpg";
-
-//            processor.ExtractAndRestore(input, extractedWatermark, restoredOutput);
-//        }
-//    }
-//}
+    Console.ForegroundColor = !string.IsNullOrEmpty(error) ? ConsoleColor.Red : ConsoleColor.White;
+    Console.WriteLine($"  {name,-32} {myMs,10}   {words,8}   {status,-15}");
+    Console.ResetColor();
+}

@@ -15,15 +15,7 @@ C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\obj\Debug\net8.0-windows10.0.
 C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\obj\Debug\net8.0-windows10.0.19041.0\OCR.pdb
 C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\obj\Debug\net8.0-windows10.0.19041.0\OCR.genruntimeconfig.cache
 C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\obj\Debug\net8.0-windows10.0.19041.0\ref\OCR.dll
-C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\bin\Debug\net8.0-windows10.0.19041.0\x86\leptonica-1.82.0.dll
-C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\bin\Debug\net8.0-windows10.0.19041.0\x86\tesseract50.dll
-C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\bin\Debug\net8.0-windows10.0.19041.0\x64\leptonica-1.82.0.dll
-C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\bin\Debug\net8.0-windows10.0.19041.0\x64\tesseract50.dll
-C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\bin\Debug\net8.0-windows10.0.19041.0\Tesseract.dll
 C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\obj\Debug\net8.0-windows10.0.19041.0\OCR.csproj.AssemblyReference.cache
-C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\bin\Debug\net8.0-windows10.0.19041.0\OpenCvSharp.dll
-C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\bin\Debug\net8.0-windows10.0.19041.0\runtimes\win-x64\native\OpenCvSharpExtern.dll
-C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\bin\Debug\net8.0-windows10.0.19041.0\runtimes\win-x64\native\opencv_videoio_ffmpeg4130_64.dll
 C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\bin\Debug\net8.0-windows10.0.19041.0\Emgu.CV.dll
 C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\bin\Debug\net8.0-windows10.0.19041.0\System.IO.Pipelines.dll
 C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\bin\Debug\net8.0-windows10.0.19041.0\System.Text.Encodings.Web.dll
@@ -59,3 +51,9 @@ C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\bin\Debug\net8.0-windows10.0.
 C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\bin\Debug\net8.0-windows10.0.19041.0\runtimes\win-x86\native\msvcp140_codecvt_ids.dll
 C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\bin\Debug\net8.0-windows10.0.19041.0\runtimes\win-x86\native\vcruntime140.dll
 C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\bin\Debug\net8.0-windows10.0.19041.0\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll
+C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\obj\Debug\net8.0-windows10.0.19041.0\OCR.sourcelink.json
+C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\bin\Debug\net8.0-windows10.0.19041.0\x86\leptonica-1.82.0.dll
+C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\bin\Debug\net8.0-windows10.0.19041.0\x86\tesseract50.dll
+C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\bin\Debug\net8.0-windows10.0.19041.0\x64\leptonica-1.82.0.dll
+C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\bin\Debug\net8.0-windows10.0.19041.0\x64\tesseract50.dll
+C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\bin\Debug\net8.0-windows10.0.19041.0\Tesseract.dll

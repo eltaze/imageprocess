@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "KwGNgZMB3Cs=",
+  "dgSpecHash": "ucpMHAWphP0=",
   "success": true,
   "projectFilePath": "C:\\Users\\m.abdelsalam\\source\\repos\\ConsoleApp1\\OCR\\OCR.csproj",
   "expectedPackageFiles": [
@@ -11,14 +11,11 @@
     "C:\\Users\\m.abdelsalam\\.nuget\\packages\\emgu.runtime.windows.msvc.rt.x86\\19.44.35214\\emgu.runtime.windows.msvc.rt.x86.19.44.35214.nupkg.sha512",
     "C:\\Users\\m.abdelsalam\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.1\\microsoft.netcore.platforms.1.1.1.nupkg.sha512",
     "C:\\Users\\m.abdelsalam\\.nuget\\packages\\microsoft.netcore.targets\\1.1.3\\microsoft.netcore.targets.1.1.3.nupkg.sha512",
-    "C:\\Users\\m.abdelsalam\\.nuget\\packages\\opencvsharp4\\4.13.0.20260427\\opencvsharp4.4.13.0.20260427.nupkg.sha512",
-    "C:\\Users\\m.abdelsalam\\.nuget\\packages\\opencvsharp4.runtime.win\\4.13.0.20260302\\opencvsharp4.runtime.win.4.13.0.20260302.nupkg.sha512",
     "C:\\Users\\m.abdelsalam\\.nuget\\packages\\runtime.native.system\\4.3.0\\runtime.native.system.4.3.0.nupkg.sha512",
     "C:\\Users\\m.abdelsalam\\.nuget\\packages\\system.drawing.primitives\\4.3.0\\system.drawing.primitives.4.3.0.nupkg.sha512",
     "C:\\Users\\m.abdelsalam\\.nuget\\packages\\system.globalization\\4.3.0\\system.globalization.4.3.0.nupkg.sha512",
     "C:\\Users\\m.abdelsalam\\.nuget\\packages\\system.io\\4.3.0\\system.io.4.3.0.nupkg.sha512",
     "C:\\Users\\m.abdelsalam\\.nuget\\packages\\system.io.pipelines\\9.0.0\\system.io.pipelines.9.0.0.nupkg.sha512",
-    "C:\\Users\\m.abdelsalam\\.nuget\\packages\\system.memory\\4.6.3\\system.memory.4.6.3.nupkg.sha512",
     "C:\\Users\\m.abdelsalam\\.nuget\\packages\\system.reflection\\4.3.0\\system.reflection.4.3.0.nupkg.sha512",
     "C:\\Users\\m.abdelsalam\\.nuget\\packages\\system.reflection.emit\\4.7.0\\system.reflection.emit.4.7.0.nupkg.sha512",
     "C:\\Users\\m.abdelsalam\\.nuget\\packages\\system.reflection.extensions\\4.3.0\\system.reflection.extensions.4.3.0.nupkg.sha512",

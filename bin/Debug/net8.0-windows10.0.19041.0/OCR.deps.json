@@ -10,8 +10,6 @@
         "dependencies": {
           "Emgu.CV": "4.12.0.5764",
           "Emgu.CV.runtime.windows": "4.12.0.5764",
-          "OpenCvSharp4": "4.13.0.20260427",
-          "OpenCvSharp4.runtime.win": "4.13.0.20260302",
           "Tesseract": "5.2.0",
           "runtimepack.Microsoft.Windows.SDK.NET.Ref": "10.0.19041.57"
         },
@@ -214,28 +212,6 @@
           }
         }
       },
-      "OpenCvSharp4/4.13.0.20260427": {
-        "runtime": {
-          "lib/net8.0/OpenCvSharp.dll": {
-            "assemblyVersion": "4.13.0.0",
-            "fileVersion": "4.13.0.0"
-          }
-        }
-      },
-      "OpenCvSharp4.runtime.win/4.13.0.20260302": {
-        "runtimeTargets": {
-          "runtimes/win-x64/native/OpenCvSharpExtern.dll": {
-            "rid": "win-x64",
-            "assetType": "native",
-            "fileVersion": "0.0.0.0"
-          },
-          "runtimes/win-x64/native/opencv_videoio_ffmpeg4130_64.dll": {
-            "rid": "win-x64",
-            "assetType": "native",
-            "fileVersion": "2025.12.0.0"
-          }
-        }
-      },
       "System.IO.Pipelines/9.0.0": {
         "runtime": {
           "lib/net8.0/System.IO.Pipelines.dll": {
@@ -327,20 +303,6 @@
       "sha512": "sha512-Cgs6eutsi7s4vO79djADbOpXdKG5x1tq4R4hq5wDIv58FimSQyIiRvnkCbZzRMUcIpXOX09W4y7P2XKS9UfSYw==",
       "path": "emgu.runtime.windows.msvc.rt.x86/19.44.35214",
       "hashPath": "emgu.runtime.windows.msvc.rt.x86.19.44.35214.nupkg.sha512"
-    },
-    "OpenCvSharp4/4.13.0.20260427": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-2+bL0ID2B+IgGzSJjQ2OB8OW31asDSpweHKH3BPZajuG1Q9Yhg7yCZ9pdC/SHlytIOfGAhRFokbnuCVVwUoMWA==",
-      "path": "opencvsharp4/4.13.0.20260427",
-      "hashPath": "opencvsharp4.4.13.0.20260427.nupkg.sha512"
-    },
-    "OpenCvSharp4.runtime.win/4.13.0.20260302": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-VC2n9CVZQvAm+p0NXW077e/MGkDBraT3ye4FdInRPpxTVK64DwGnLuIncS8mwrkVcKhqh82/KgcDgKXNWDndAA==",
-      "path": "opencvsharp4.runtime.win/4.13.0.20260302",
-      "hashPath": "opencvsharp4.runtime.win.4.13.0.20260302.nupkg.sha512"
     },
     "System.IO.Pipelines/9.0.0": {
       "type": "package",
