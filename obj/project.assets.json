@@ -1876,7 +1876,6 @@
       },
       "frameworks": {
         "net8.0-windows10.0.19041": {
-          "framework": "net8.0-windows10.0.19041",
           "targetAlias": "net8.0-windows10.0.19041.0",
           "projectReferences": {}
         }
@@ -1895,7 +1894,6 @@
     },
     "frameworks": {
       "net8.0-windows10.0.19041": {
-        "framework": "net8.0-windows10.0.19041",
         "targetAlias": "net8.0-windows10.0.19041.0",
         "dependencies": {
           "Emgu.CV": {

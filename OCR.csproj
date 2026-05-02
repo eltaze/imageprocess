@@ -15,4 +15,11 @@
 		<PackageReference Include="Tesseract" Version="5.2.0" />
 	</ItemGroup>
 
+	<!-- Copy the tessdata folder to the build output automatically -->
+	<ItemGroup>
+		<None Update="data\**\*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
 </Project>

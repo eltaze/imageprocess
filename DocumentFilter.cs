@@ -1,44 +1,26 @@
-using System;
-using System.IO;
 using Emgu.CV;
-using Emgu.CV.Util;
-
-namespace ImageProcessing
+using Tesseract;
+using Emgu.CV.Bitmap;
+public class OcrEngine
 {
-    /// <summary>
-    /// Filters a source image using the Green channel + Binary Threshold
-    /// to suppress watermarks and improve OCR readability.
-    /// </summary>
-    public class DocumentFilter
+    private readonly TesseractEngine _engine;
+
+    public OcrEngine(string tessDataPath)
     {
-        /// <summary>
-        /// Applies green-channel extraction and binary thresholding to the input image
-        /// and saves the result to <paramref name="outputImagePath"/>.
-        /// </summary>
-        public bool Execute(string inputImagePath, string outputImagePath, int threshold = 150)
-        {
-            using Mat original = CvInvoke.Imread(inputImagePath, Emgu.CV.CvEnum.ImreadModes.ColorBgr);
+        _engine = new TesseractEngine(tessDataPath, "ara+eng", EngineMode.LstmOnly);
 
-            if (original.IsEmpty)
-            {
-                Console.WriteLine("[DocumentFilter] Failed to load image: " + inputImagePath);
-                return false;
-            }
+        // 🔥 Critical tuning
+        _engine.SetVariable("tessedit_do_invert", "1");
+        _engine.SetVariable("textord_heavy_nr", "1");
+        _engine.SetVariable("preserve_interword_spaces", "1");
+    }
 
-            using VectorOfMat channels = new VectorOfMat();
-            CvInvoke.Split(original, channels);   // splits into B, G, R
+    public string ExtractText(Mat image)
+    {
+        using var bmp = image.ToBitmap();
+        using var pix = PixConverter.ToPix(bmp);
+        using var page = _engine.Process(pix, PageSegMode.Auto);
 
-            // Green channel = index 1 in BGR
-            using Mat greenChannel = channels[1].Clone();
-            using Mat result = new Mat();
-
-            CvInvoke.Threshold(greenChannel, result, threshold, 255,
-                Emgu.CV.CvEnum.ThresholdType.Binary);
-
-            CvInvoke.Imwrite(outputImagePath, result);
-
-            Console.WriteLine($"[DocumentFilter] Filtered image saved → {outputImagePath}");
-            return true;
-        }
+        return page.GetText();
     }
 }

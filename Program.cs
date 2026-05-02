@@ -7,12 +7,13 @@ Console.OutputEncoding = System.Text.Encoding.UTF8;
 Console.InputEncoding  = System.Text.Encoding.UTF8;
 
 // ── Configuration ─────────────────────────────────────────────────────────────
-// Use AppDomain.CurrentDomain.BaseDirectory (the exe folder) — always writable
 string baseDir       = AppDomain.CurrentDomain.BaseDirectory;
-string inputImage    = @"C:\test.png";                                  // Source image
-string filteredImage = Path.Combine(baseDir, "test_filtered.png");     // Writable output
-string tessDataPath  = @"C:\mpdata";                                  // Tesseract tessdata folder
-string tessLanguage  = "ara+eng";                                       // Tesseract language(s)
+string inputImage    = @"C:\test.png";
+string filteredImage = Path.Combine(baseDir, "test_filtered.png");
+
+// tessdata is in the 'data' subfolder of the project (copied to output)
+string tessDataPath  = Path.Combine(baseDir, "data");
+string tessLanguage  = "ara+eng";
 // ──────────────────────────────────────────────────────────────────────────────
 
 PrintBanner();
@@ -45,18 +46,15 @@ Section("Step 2 – Running OCR Engines");
 
 var benchmark = new OcrBenchmark(tessDataPath, tessLanguage);
 
-// Start Windows OCR async, run Tesseract sync in parallel
 Console.WriteLine("  ⏳ Running Windows OCR...");
 var winTask = benchmark.RunWindowsOcrAsync(filteredImage);
 
 Console.WriteLine("  ⏳ Running Tesseract OCR...");
 var tessResult = benchmark.RunTesseractOcr(filteredImage);
-
-var winResult = await winTask;
+var winResult  = await winTask;
 
 // ── Step 3: Display Results ───────────────────────────────────────────────────
 Section("Step 3 – Results Comparison");
-
 PrintResult(winResult,  "🪟");
 PrintResult(tessResult, "📖");
 
@@ -66,7 +64,7 @@ PrintPerformanceTable(winResult, tessResult);
 
 Console.WriteLine();
 Console.ForegroundColor = ConsoleColor.DarkGray;
-Console.WriteLine($"  Filtered image: {filteredImage}");
+Console.WriteLine($"  Filtered image saved to: {filteredImage}");
 Console.ResetColor();
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -94,7 +92,7 @@ static bool RunPreflightChecks(string inputImage, string tessDataPath, string te
     Section("Pre-flight Checks");
     bool ok = true;
 
-    // Check input image
+    // Input image
     if (!File.Exists(inputImage))
     {
         Fail($"Input image not found: {inputImage}");
@@ -103,7 +101,7 @@ static bool RunPreflightChecks(string inputImage, string tessDataPath, string te
     else
         Pass($"Input image found: {inputImage}");
 
-    // Check tessdata folder
+    // Tessdata folder
     if (!Directory.Exists(tessDataPath))
     {
         Fail($"Tessdata folder not found: {tessDataPath}");
@@ -112,8 +110,6 @@ static bool RunPreflightChecks(string inputImage, string tessDataPath, string te
     else
     {
         Pass($"Tessdata folder found: {tessDataPath}");
-
-        // List available .traineddata files
         var files = Directory.GetFiles(tessDataPath, "*.traineddata");
         Console.ForegroundColor = ConsoleColor.DarkGray;
         Console.WriteLine($"    Available traineddata files ({files.Length}):");
@@ -121,15 +117,11 @@ static bool RunPreflightChecks(string inputImage, string tessDataPath, string te
             Console.WriteLine($"      • {Path.GetFileName(f)}");
         Console.ResetColor();
 
-        // Check each required language
         foreach (string lang in tessLanguage.Split('+'))
         {
             string expected = Path.Combine(tessDataPath, lang.Trim() + ".traineddata");
             if (!File.Exists(expected))
-            {
-                Fail($"Missing: {expected}");
-                ok = false;
-            }
+            { Fail($"Missing: {Path.GetFileName(expected)}"); ok = false; }
             else
                 Pass($"Language file found: {lang}.traineddata");
         }
@@ -141,7 +133,6 @@ static bool RunPreflightChecks(string inputImage, string tessDataPath, string te
         Console.WriteLine("\n  ❌ Pre-flight failed. Fix the above issues and re-run.");
         Console.ResetColor();
     }
-
     return ok;
 }
 
@@ -202,14 +193,15 @@ static void PrintPerformanceTable(
     Console.ForegroundColor = ConsoleColor.Cyan;
     Console.WriteLine($"  {"Engine",-32} {"Time (ms)",10}   {"Words",8}   {"Status",-15}");
     Console.WriteLine($"  {"──────",32} {"──────────",10}   {"─────",8}   {"──────────────",15}");
-
     PrintRow("🪟  Windows OCR",   winMs,  tessMs, win.Text,  win.Error);
     PrintRow("📖  Tesseract OCR", tessMs, winMs,  tess.Text, tess.Error);
     Console.ResetColor();
 
     if (string.IsNullOrEmpty(win.Error) && string.IsNullOrEmpty(tess.Error))
     {
-        string winner = winMs < tessMs ? "🪟  Windows OCR" : winMs == tessMs ? "Tie" : "📖  Tesseract OCR";
+        string winner = winMs < tessMs ? "🪟  Windows OCR"
+                      : winMs == tessMs ? "Tie"
+                      : "📖  Tesseract OCR";
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine($"\n  🏆  Fastest engine: {winner}");
         Console.ResetColor();
@@ -218,13 +210,10 @@ static void PrintPerformanceTable(
 
 static void PrintRow(string name, int myMs, int otherMs, string text, string error)
 {
-    int words = string.IsNullOrWhiteSpace(text) ? 0 :
-        text.Split(new[] {' ', '\n', '\r'}, StringSplitOptions.RemoveEmptyEntries).Length;
-
+    int words = string.IsNullOrWhiteSpace(text) ? 0
+        : text.Split(new[] {' ', '\n', '\r'}, StringSplitOptions.RemoveEmptyEntries).Length;
     string status = !string.IsNullOrEmpty(error) ? "❌ Error"
-        : myMs <= otherMs ? "✅ Faster"
-        : "🐢 Slower";
-
+        : myMs <= otherMs ? "✅ Faster" : "🐢 Slower";
     Console.ForegroundColor = !string.IsNullOrEmpty(error) ? ConsoleColor.Red : ConsoleColor.White;
     Console.WriteLine($"  {name,-32} {myMs,10}   {words,8}   {status,-15}");
     Console.ResetColor();

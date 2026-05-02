@@ -57,3 +57,5 @@ C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\bin\Debug\net8.0-windows10.0.
 C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\bin\Debug\net8.0-windows10.0.19041.0\x64\leptonica-1.82.0.dll
 C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\bin\Debug\net8.0-windows10.0.19041.0\x64\tesseract50.dll
 C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\bin\Debug\net8.0-windows10.0.19041.0\Tesseract.dll
+C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\bin\Debug\net8.0-windows10.0.19041.0\data\ara.traineddata
+C:\Users\m.abdelsalam\source\repos\ConsoleApp1\OCR\bin\Debug\net8.0-windows10.0.19041.0\data\eng.traineddata
